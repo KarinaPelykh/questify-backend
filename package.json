@@ -1,0 +1,26 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "description": "Studying project",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app",
+    "start:dev": "nodemon index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KarinaPelykh/node-js.git"
+  },
+  "author": "Karyna",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KarinaPelykh/node-js/issues"
+  },
+  "homepage": "https://github.com/KarinaPelykh/node-js",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14"
+  }
+}
