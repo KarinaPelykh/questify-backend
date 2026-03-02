@@ -1,0 +1,14 @@
+const { model } = require("mongoose");
+const { HttpError } = require("../helpers");
+
+const validateBody = (schema) => {
+  return function (req, res, next) {
+    const { error } = schema.validate(req.body);
+    if (error) {
+      next(HttpError(400, error.message));
+    }
+    next();
+  };
+};
+
+model.exports = validateBody;
