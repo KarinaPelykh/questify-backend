@@ -7,11 +7,11 @@ const userSchema = new Schema(
     password: {
       type: String,
       lowercase: true,
-      minLength: 6,
-      maxLength: 32,
+      minlength: 6,
+
       require: true,
     },
-    token: { type: String },
+    refreshToken: { type: String },
   },
   { versionKey: false, timestamps: true },
 );

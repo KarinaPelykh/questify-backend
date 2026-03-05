@@ -11,10 +11,10 @@ const userRoute = require("./routes/api/user");
 const cardRoute = require("./routes/api/card");
 
 app.use(express.json());
-
+app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
-app.use("/api/user", userRoute);
+app.use("/api/auth", userRoute);
 app.use("/api/card", cardRoute);
 
 //not found page
