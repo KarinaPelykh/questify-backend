@@ -2,9 +2,9 @@ const Joi = require("joi");
 
 const cardSchema = Joi.object({
   category: Joi.string().required(),
-  status: Joi.string.require(),
-  date: Joi.string.require(),
-  quest: Joi.string.require(),
+  status: Joi.string().required(),
+  date: Joi.string().required(),
+  quest: Joi.string().required(),
 });
 
 module.exports = cardSchema;

@@ -1,4 +1,3 @@
-const { model } = require("mongoose");
 const { HttpError } = require("../helpers");
 
 const validateBody = (schema) => {
@@ -11,4 +10,4 @@ const validateBody = (schema) => {
   };
 };
 
-model.exports = validateBody;
+module.exports = validateBody;
