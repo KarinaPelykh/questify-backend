@@ -1,7 +1,7 @@
 const { ctrlWrapper, HttpError } = require("../helpers");
 const User = require("../model/user");
 
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
@@ -50,12 +50,14 @@ const signup = async (req, res) => {
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
+  console.log("signin", password);
 
-  const user = await User.findOne({ email }).select("+password");
+  const user = await User.findOne({ email });
 
   if (!user) {
     throw HttpError(401, "Unauthorized");
   }
+  console.log("signin user", user.password);
 
   const passwordCompare = await bcrypt.compare(password, user.password);
 

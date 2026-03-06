@@ -5,14 +5,11 @@ const ctrl = require("../../controller/auth");
 const schema = require("../../schema/userSchema");
 const { validateBody } = require("../../middleware");
 
-const signupValidation = validateBody(schema.userSignUpSchema);
-const signinValidation = validateBody(schema.userSignInSchema);
+router.post("/signup", validateBody(schema.userSignUpSchema), ctrl.signup);
 
-router.post("/signup", signupValidation, ctrl.signup);
+router.post("/signin", validateBody(schema.userSignInSchema), ctrl.signin);
 
-router.post("/signin", signinValidation, ctrl.signin);
-//signout user
-router.patch("/", (req, res) => {});
+router.patch("/", ctrl.signout);
 //refresh
 router.get("/", (req, res) => {});
 
