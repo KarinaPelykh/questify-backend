@@ -3,13 +3,16 @@ const Card = require("../model/card");
 const { ctrlWrapper, HttpError } = require("../helpers");
 
 const getAllCards = async (req, res) => {
-  const data = await Card.find();
+  const { _id: owner } = req.user;
+  const data = await Card.find({ owner });
 
   res.status(200).json(data);
 };
 
 const createCard = async (req, res) => {
-  const data = await Card.create({ ...req.body });
+  const { _id: owner } = req.user;
+
+  const data = await Card.create({ ...req.body, owner });
 
   res.status(200).json(data);
 };

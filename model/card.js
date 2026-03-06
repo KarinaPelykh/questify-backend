@@ -6,6 +6,7 @@ const cardSchema = new Schema(
     status: { type: String },
     date: { type: String },
     quest: { type: String },
+    owner: { type: Schema.Types.ObjectId, ref: "user", require: true },
   },
   { versionKey: false, timestamps: true },
 );

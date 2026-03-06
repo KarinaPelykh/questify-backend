@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const ctrl = require("../../controller/card");
-const { validateBody } = require("../../middleware");
+const { validateBody, authenticate } = require("../../middleware");
 const cardSchema = require("../../schema/cardSchema");
 
-router.get("/", ctrl.getAllCards);
+router.get("/", authenticate, ctrl.getAllCards);
 
-router.post("/", validateBody(cardSchema), ctrl.createCard);
+router.post("/", authenticate, validateBody(cardSchema), ctrl.createCard);
 
-router.delete("/:id", ctrl.deleteCard);
+router.delete("/:id", authenticate, ctrl.deleteCard);
 
-router.patch("/:id", ctrl.editCardById);
+router.patch("/:id", authenticate, ctrl.editCardById);
 
 module.exports = router;

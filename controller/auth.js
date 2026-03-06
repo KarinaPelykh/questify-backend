@@ -1,21 +1,7 @@
-const { ctrlWrapper, HttpError } = require("../helpers");
+const { ctrlWrapper, HttpError, generateToken } = require("../helpers");
 const User = require("../model/user");
 
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-
-const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
-
-// tokens
-
-const generateAccessToken = (payload) => {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "15m" });
-};
-
-const generateRefreshToken = (payload) => {
-  return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: "7d" });
-};
-// tokens
 
 const signup = async (req, res) => {
   const { email, password } = req.body;
@@ -32,9 +18,7 @@ const signup = async (req, res) => {
     password: hashPassword,
   });
 
-  const accessToken = generateAccessToken({ id: newUser._id });
-
-  const refreshToken = generateRefreshToken({ id: newUser._id });
+  const { accessToken, refreshToken } = generateToken({ id: newUser._id });
 
   await User.findByIdAndUpdate(newUser._id, { refreshToken });
 
@@ -50,14 +34,12 @@ const signup = async (req, res) => {
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
-  console.log("signin", password);
 
   const user = await User.findOne({ email });
 
   if (!user) {
     throw HttpError(401, "Unauthorized");
   }
-  console.log("signin user", user.password);
 
   const passwordCompare = await bcrypt.compare(password, user.password);
 
@@ -65,9 +47,7 @@ const signin = async (req, res) => {
     throw HttpError(401, "Invalid password");
   }
 
-  const accessToken = generateAccessToken({ id: user._id });
-
-  const refreshToken = generateRefreshToken({ id: user._id });
+  const { accessToken, refreshToken } = generateToken({ id: user._id });
 
   const data = await User.findByIdAndUpdate(user._id, { refreshToken });
 
@@ -85,10 +65,14 @@ const signout = async (req, res) => {
   res.json({ message: "Signout success" });
 };
 
-const refresh = async () => {};
+const refresh = async (req, res) => {
+  const { name, email } = req.user;
+  res.json({ name, email });
+};
 
 module.exports = {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
   signout: ctrlWrapper(signout),
+  refresh: ctrlWrapper(refresh),
 };
