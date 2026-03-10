@@ -11,6 +11,8 @@ router.post("/signin", validateBody(schema.userSignInSchema), ctrl.signin);
 
 router.post("/signout", authenticate, ctrl.signout);
 
-router.get("/refresh", authenticate, ctrl.refresh);
+router.get("/current", authenticate, ctrl.current);
+
+router.post("/refresh", ctrl.refresh);
 
 module.exports = router;

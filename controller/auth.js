@@ -1,7 +1,8 @@
 const { ctrlWrapper, HttpError, generateToken } = require("../helpers");
 const User = require("../model/user");
-
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { JWT_REFRESH_SECRET } = process.env;
 
 const signup = async (req, res) => {
   const { email, password } = req.body;
@@ -22,13 +23,17 @@ const signup = async (req, res) => {
 
   await User.findByIdAndUpdate(newUser._id, { refreshToken });
 
+  res.cookie("refresh_token", refreshToken, {
+    httpOnly: true,
+    secure: true,
+  });
+
   res.status(201).json({
     user: {
       id: newUser._id,
       email: newUser.email,
     },
     accessToken,
-    refreshToken,
   });
 };
 
@@ -51,10 +56,14 @@ const signin = async (req, res) => {
 
   const data = await User.findByIdAndUpdate(user._id, { refreshToken });
 
+  res.cookie("refresh_token", refreshToken, {
+    httpOnly: true,
+    secure: true,
+  });
+
   res.status(200).json({
     user: { id: data._id, email: data.email },
     accessToken,
-    refreshToken,
   });
 };
 
@@ -62,17 +71,42 @@ const signout = async (req, res) => {
   const { _id: owner } = req.user;
 
   await User.findByIdAndUpdate(owner, { refreshToken: "" });
+  res.clearCookie("refresh_token");
   res.json({ message: "Signout success" });
 };
 
-const refresh = async (req, res) => {
+const current = async (req, res) => {
   const { name, email } = req.user;
   res.json({ name, email });
+};
+
+const refresh = async (req, res) => {
+  const { refresh_token = "" } = req.cookies;
+
+  if (!refresh_token) {
+    throw HttpError(401, "No refresh token provided");
+  }
+  const { id } = jwt.verify(refresh_token, JWT_REFRESH_SECRET);
+
+  const user = await User.findById(id);
+
+  if (!user && refresh_token !== user.refreshToken) {
+    throw HttpError(401, "Unauthorized");
+  }
+
+  const { accessToken, refreshToken } = generateToken({ id: user._id });
+
+  await User.findByIdAndUpdate(id, { refreshToken });
+
+  res.cookie("refresh_token", refreshToken, { httpOnly: true, secure: true });
+
+  res.json({ accessToken });
 };
 
 module.exports = {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
   signout: ctrlWrapper(signout),
+  current: ctrlWrapper(current),
   refresh: ctrlWrapper(refresh),
 };

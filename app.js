@@ -1,8 +1,10 @@
 const express = require("express");
-
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 require("dotenv").config();
+
+const { JWT_REFRESH_SECRET } = process.env;
 
 const app = express();
 
@@ -13,6 +15,7 @@ const cardRoute = require("./routes/api/card");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
+app.use(cookieParser(JWT_REFRESH_SECRET));
 
 app.use("/api/auth", userRoute);
 app.use("/api/card", cardRoute);
