@@ -1,16 +1,15 @@
 {
-  "name": "project",
+  "name": "Questify",
   "version": "1.0.0",
-  "description": "Studying project",
+  "description": "Questify",
   "main": "app.js",
+  "engines": {
+    "node": ">=16.0 <=22.13"
+  },
   "scripts": {
     "start": "node app",
     "start:dev": "nodemon index",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/KarinaPelykh/node-js.git"
   },
   "author": "Karyna",
   "license": "ISC",
