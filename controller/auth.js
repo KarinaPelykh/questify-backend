@@ -26,6 +26,8 @@ const signup = async (req, res) => {
   res.cookie("refresh_token", refreshToken, {
     httpOnly: true,
     secure: true,
+    sameSite: "None",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
   res.status(201).json({
@@ -59,6 +61,8 @@ const signin = async (req, res) => {
   res.cookie("refresh_token", refreshToken, {
     httpOnly: true,
     secure: true,
+    sameSite: "None",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
   res.status(200).json({
@@ -71,7 +75,11 @@ const signout = async (req, res) => {
   const { _id: owner } = req.user;
 
   await User.findByIdAndUpdate(owner, { refreshToken: "" });
-  res.clearCookie("refresh_token");
+  res.clearCookie("refresh_token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+  });
   res.json({ message: "Signout success" });
 };
 
@@ -90,7 +98,7 @@ const refresh = async (req, res) => {
 
   const user = await User.findById(id);
 
-  if (!user && refresh_token !== user.refreshToken) {
+  if (!user || refresh_token !== user.refreshToken) {
     throw HttpError(401, "Unauthorized");
   }
 
@@ -98,7 +106,12 @@ const refresh = async (req, res) => {
 
   await User.findByIdAndUpdate(id, { refreshToken });
 
-  res.cookie("refresh_token", refreshToken, { httpOnly: true, secure: true });
+  res.cookie("refresh_token", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
 
   res.json({ accessToken });
 };
